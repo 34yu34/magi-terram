@@ -1,0 +1,134 @@
+@startuml component
+
+package Configs {
+    class ShopConfig
+    class GameConfig
+}
+
+package Utility {
+    abstract AStateMachine
+    interface IState
+
+    AStateMachine *-- IState
+}
+
+ package Effects {
+    abstract Effect
+ }
+
+package Units {
+
+
+ class Unit
+ class StatsHandler {
+     stats : Stat[]
+ }
+ class Stat
+ class EffectsHandler {
+}
+ abstract Ability
+
+ enum StatsType
+
+ class UnitStateMachine
+
+ package UnitsStates {
+     IState <|-- AttackState
+     IState <|-- WaitState
+     IState <|-- AbilityState
+ }
+
+ ShopConfig "1" *-- "*" Unit
+  
+ Unit *-- StatsHandler
+ Unit *-- EffectsHandler
+ Unit *-- Ability
+ Unit *-- UnitStateMachine
+ 
+ EffectsHandler "1" o-- "*" Effect
+ Ability *-- Effect
+
+ StatsHandler *-- Stat
+ StatsHandler *-- StatsType
+
+ AStateMachine <|-- UnitStateMachine  
+
+UnitStateMachine *-- AttackState
+UnitStateMachine *-- WaitState
+UnitStateMachine *-- AbilityState
+
+}
+
+package Boards {
+ class Board
+ class ShopArea
+ class PlayArea
+ class BenchArea
+
+ Board *-- ShopArea
+ Board *-- PlayArea
+ Board *-- BenchArea
+
+ class TileGroup {
+ }
+
+ ShopArea *-- TileGroup
+ PlayArea *-- TileGroup
+ BenchArea *-- TileGroup
+
+ abstract Tile {
+    - position : Hex
+ }
+
+ class Hex {
+    - q : int
+    - r : int
+ }
+
+ Tile *-- Hex
+
+ Tile *-- Effect
+
+ TileGroup  "1" *-- "*" Tile
+}
+
+package Shops {
+    class Shop
+
+    Shop o-- ShopConfig
+    Shop o-- ShopArea
+}
+
+package Players {
+    class MainPlayer
+    class Player
+    class DragManager
+    class Team
+
+    Player <|-- MainPlayer
+    MainPlayer *-- DragManager
+    Player *-- Team
+
+    Team "1" *-- "*" Unit
+}
+
+package Game {
+    class Round
+    class TargetFinder {
+
+    }
+
+    TargetFinder "1" o-- "*" Team 
+ }
+
+ class UnitTileMediator {
+     - Unit : Unit
+     - tile : Tile
+     + TryMove(Unit Unit, Tile tile)
+ }
+
+ Unit *-- UnitTileMediator
+ Tile *-- UnitTileMediator
+
+
+@enduml
